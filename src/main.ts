@@ -9,6 +9,7 @@ import { json } from "body-parser";
 import { expressMiddleware } from "@apollo/server/express4";
 import { buildSchema } from "type-graphql";
 import { MovieResolver } from "./movie/movie-resolver";
+import { prisma } from "./db";
 
 const startServer = async () => {
   const schema = await buildSchema({
@@ -33,4 +34,6 @@ const startServer = async () => {
   console.log(`🚀 Server listening on port ${port}`);
 };
 
-startServer();
+startServer()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());

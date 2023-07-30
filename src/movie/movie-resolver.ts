@@ -1,6 +1,7 @@
 import { Mutation, Query, Resolver, Arg } from "type-graphql";
 import { Movie } from "./movie";
 import * as MovieInputs from "./movie-inputs";
+import { prisma } from "@/db";
 
 @Resolver()
 export class MovieResolver {
@@ -12,6 +13,12 @@ export class MovieResolver {
   public async createNewMovie(
     @Arg("data") newMovieData: MovieInputs.NewMovieInput
   ) {
-    throw Error("Not implemented exception");
+    await prisma.movie.create({
+      data: {
+        name: newMovieData.name,
+        description: newMovieData.description,
+      },
+    });
+    return "ok";
   }
 }
