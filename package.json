@@ -1,0 +1,25 @@
+{
+  "name": "movieql",
+  "version": "1.0.0",
+  "description": "Movie catalog that is powered with GraphQL",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spelchure/movieql.git"
+  },
+  "keywords": [
+    "graphql",
+    "apollo",
+    "typescript",
+    "mongo"
+  ],
+  "author": "Alperen BAYRAMOĞLU",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Spelchure/movieql/issues"
+  },
+  "homepage": "https://github.com/Spelchure/movieql#readme"
+}
