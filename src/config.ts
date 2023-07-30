@@ -1,12 +1,17 @@
 export class Config {
-  private readonly _kv: object;
+  private readonly _kv: Record<string, any>;
 
-  constructor(kv: object) {
+  constructor(kv: Record<string, any>) {
     this._kv = kv;
   }
 
   public read<T>(key: string) {
-    if (process.env["key"] === undefined) {
+    if (key === undefined || key.length === 0) {
+      throw Error(`Invalid key: ${key}.`);
     }
+    if (this._kv[key] === undefined || this._kv[key] === null) {
+      throw Error(`You should define ${key} in the environment.`);
+    }
+    return this._kv[key] as T;
   }
 }
