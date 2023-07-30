@@ -15,3 +15,6 @@ export class Config {
     return this._kv[key] as T;
   }
 }
+
+const config = new Config(process.env);
+export default config;
