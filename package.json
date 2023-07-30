@@ -14,7 +14,11 @@
     "graphql",
     "apollo",
     "typescript",
-    "mongo"
+    "mongo",
+    "docker",
+    "eslint",
+    "postman",
+    "express"
   ],
   "author": "Alperen BAYRAMOĞLU",
   "license": "MIT",
