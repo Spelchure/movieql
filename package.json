@@ -2,9 +2,9 @@
   "name": "movieql",
   "version": "1.0.0",
   "description": "Movie catalog that is powered with GraphQL",
-  "main": "main.js",
+  "main": "src/main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -r tsconfig-paths/register src/main.ts"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,12 @@
   "bugs": {
     "url": "https://github.com/Spelchure/movieql/issues"
   },
-  "homepage": "https://github.com/Spelchure/movieql#readme"
+  "homepage": "https://github.com/Spelchure/movieql#readme",
+  "devDependencies": {
+    "@types/node": "^20.4.5",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.6"
+  }
 }
