@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import "dotenv/config";
 import type { AppContext } from "./context";
 import express from "express";
@@ -6,10 +7,14 @@ import cors from "cors";
 import config from "./config";
 import { json } from "body-parser";
 import { expressMiddleware } from "@apollo/server/express4";
+import { buildSchema } from "type-graphql";
+import { MovieResolver } from "./movie/movie-resolver";
 
 const startServer = async () => {
-  // @ts-ignore
-  const server = new ApolloServer<AppContext>({ schema: undefined });
+  const schema = await buildSchema({
+    resolvers: [MovieResolver],
+  });
+  const server = new ApolloServer<AppContext>({ schema });
 
   const app = express();
 
