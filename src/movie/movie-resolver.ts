@@ -7,7 +7,8 @@ import { prisma } from "@/db";
 export class MovieResolver {
   @Query((_) => [Movie])
   public async getAllMovies() {
-    return [];
+    const allMovies = await prisma.movie.findMany();
+    return allMovies;
   }
   @Mutation((_) => String)
   public async createNewMovie(
