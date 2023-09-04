@@ -17,6 +17,36 @@ const clearDB = async () => {
   await exec("npx prisma db push --force-reset --accept-data-loss");
 };
 
+class GraphQLQueryBuilder {
+  private _query: string;
+  constructor() {
+    this._query = "";
+  }
+
+  // FIX: seperate mutation and query to concrete classes
+  mutation(
+    mutationName: string,
+    data: Record<string, string | number | null>,
+    wants: string[]
+  ) {
+    this._query = `mutation ${mutationName} { ${mutationName}(data: { `;
+
+    const params = Object.keys(data).map((key) => {
+      const value =
+        typeof data[key] === "string" ? `"${data[key]}"` : data[key];
+      return `${key}: ${value}`;
+    });
+
+    this._query += params.join(", ") + ` }) { ${wants.join(", ")} }}`;
+
+    return this;
+  }
+
+  build() {
+    return this._query;
+  }
+}
+
 describe("Test for movie resolver", () => {
   beforeEach(async () => {
     await clearDB();
