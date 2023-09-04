@@ -10,16 +10,16 @@ export class MovieResolver {
     const allMovies = await prisma.movie.findMany();
     return allMovies;
   }
-  @Mutation((_) => String)
+  @Mutation((_) => Movie)
   public async createNewMovie(
     @Arg("data") newMovieData: MovieInputs.NewMovieInput
   ) {
-    await prisma.movie.create({
+    const createdMovie = await prisma.movie.create({
       data: {
         name: newMovieData.name,
         description: newMovieData.description,
       },
     });
-    return "ok";
+    return createdMovie;
   }
 }

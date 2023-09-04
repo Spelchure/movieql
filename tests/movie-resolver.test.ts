@@ -87,4 +87,44 @@ describe("Test for movie resolver", () => {
       .to.have.lengthOf(movies.length)
       .to.containSubset(movies);
   });
+
+  test.each([
+    [{ name: "Simple name", description: null }],
+    [{ name: "Another name", description: "And the description" }],
+  ])("createNewMovie should create a new movie", async (movie) => {
+    // Arrange
+    const schema = await buildSchema({
+      resolvers: [MovieResolver],
+    });
+    const testServer = new ApolloServer<AppContext>({ schema });
+    const queryBuilder = new GraphQLQueryBuilder();
+
+    type CreateNewMovie = {
+      createNewMovie: Movie;
+    };
+
+    // TODO: also test validation errors
+    // Act
+    const query = queryBuilder
+      .mutation(
+        "createNewMovie",
+        { name: movie.name, description: movie.description },
+        ["name", "description"]
+      )
+      .build();
+    const response = await testServer.executeOperation<CreateNewMovie>({
+      query,
+    });
+
+    // Assert
+    assert(response.body.kind === "single");
+    expect(response.body.singleResult.data?.createNewMovie).to.have.ownProperty(
+      "name",
+      movie.name
+    );
+    expect(response.body.singleResult.data?.createNewMovie).to.have.ownProperty(
+      "description",
+      movie.description
+    );
+  });
 });
