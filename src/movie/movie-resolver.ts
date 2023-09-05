@@ -6,8 +6,13 @@ import { prisma } from "@/db";
 @Resolver()
 export class MovieResolver {
   @Query((_) => [Movie])
-  public async getAllMovies() {
-    const allMovies = await prisma.movie.findMany();
+  public async getAllMovies(
+    @Arg("data") paginationData: MovieInputs.GetAllMoviesInput
+  ) {
+    const skip = paginationData.skip ?? 0;
+    const take = paginationData.limit;
+
+    const allMovies = await prisma.movie.findMany({ skip, take });
     return allMovies;
   }
   @Mutation((_) => Movie)

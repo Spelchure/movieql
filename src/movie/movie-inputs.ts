@@ -9,3 +9,12 @@ export class NewMovieInput implements Partial<Movie> {
   @Field({ nullable: true })
   description?: string;
 }
+
+@InputType()
+export class GetAllMoviesInput {
+  @Field({ nullable: true })
+  skip!: number;
+
+  @Field()
+  limit!: number;
+}

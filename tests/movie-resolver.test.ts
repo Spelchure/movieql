@@ -42,6 +42,27 @@ class GraphQLQueryBuilder {
     return this;
   }
 
+  query(
+    queryName: string,
+    wants: string[],
+    data?: Record<string, string | number | null>
+  ) {
+    this._query = `query ${queryName} { ${queryName}`;
+
+    if (data !== undefined && Object.keys(data).length > 0) {
+      // TODO: this is duplicate
+      const params = Object.keys(data).map((key) => {
+        const value =
+          typeof data[key] === "string" ? `"${data[key]}"` : data[key];
+        return `${key}: ${value}`;
+      });
+      this._query += `(data: { ${params.join(", ")} })`;
+    }
+    this._query += ` { ${wants.join(", ")} } }`;
+
+    return this;
+  }
+
   build() {
     return this._query;
   }
@@ -61,32 +82,39 @@ describe("Test for movie resolver", () => {
         { name: "Another name", description: "And the description" },
       ],
     ],
-  ])("getAllMovies should return all movies", async (movies) => {
-    // Arrange
-    // FIX: should add database in the beforeEach section
-    await prisma.movie.createMany({ data: movies });
-    const schema = await buildSchema({
-      resolvers: [MovieResolver],
-    });
-    const testServer = new ApolloServer<AppContext>({ schema });
+  ])(
+    "getAllMovies should return all movies",
+    async (movies, limit: number = 10) => {
+      // Arrange
+      const queryBuilder = new GraphQLQueryBuilder();
+      // FIX: should add database in the beforeEach section
+      await prisma.movie.createMany({ data: movies });
+      const schema = await buildSchema({
+        resolvers: [MovieResolver],
+      });
+      const testServer = new ApolloServer<AppContext>({ schema });
 
-    // TODO: can we get response type from query string?
-    type GetAllMovies = {
-      getAllMovies: Movie[];
-    };
+      // TODO: can we get response type from query string?
+      type GetAllMovies = {
+        getAllMovies: Movie[];
+      };
+      const query = queryBuilder
+        .query("getAllMovies", ["id", "name", "description"], { limit })
+        .build();
 
-    // Act
-    const response = await testServer.executeOperation<GetAllMovies>({
-      query: "query GetMovies { getAllMovies { id, name, description } }",
-    });
+      // Act
+      const response = await testServer.executeOperation<GetAllMovies>({
+        query,
+      });
 
-    // Assert
-    assert(response.body.kind === "single");
-    expect(response.body.singleResult.data?.getAllMovies)
-      .to.be.an("array")
-      .to.have.lengthOf(movies.length)
-      .to.containSubset(movies);
-  });
+      // Assert
+      assert(response.body.kind === "single");
+      expect(response.body.singleResult.data?.getAllMovies)
+        .to.be.an("array")
+        .to.have.lengthOf(movies.length)
+        .to.containSubset(movies);
+    }
+  );
 
   test.each([
     [{ name: "Simple name", description: null }],
