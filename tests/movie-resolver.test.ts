@@ -6,6 +6,10 @@ import { ApolloServer } from "@apollo/server";
 import { buildSchema } from "type-graphql";
 import util from "util";
 import { exec as execSync } from "node:child_process";
+import {
+  MutationGraphQLQueryBuilder,
+  QueryGraphQLQueryBuilder,
+} from "./graphql-query-builder";
 import { Movie } from "@/movie/movie";
 import chai, { assert, expect } from "chai";
 import chaiSubset from "chai-subset";
@@ -16,57 +20,6 @@ const exec = util.promisify(execSync);
 const clearDB = async () => {
   await exec("npx prisma db push --force-reset --accept-data-loss");
 };
-
-class GraphQLQueryBuilder {
-  private _query: string;
-  constructor() {
-    this._query = "";
-  }
-
-  // FIX: seperate mutation and query to concrete classes
-  mutation(
-    mutationName: string,
-    data: Record<string, string | number | null>,
-    wants: string[]
-  ) {
-    this._query = `mutation ${mutationName} { ${mutationName}(data: { `;
-
-    const params = Object.keys(data).map((key) => {
-      const value =
-        typeof data[key] === "string" ? `"${data[key]}"` : data[key];
-      return `${key}: ${value}`;
-    });
-
-    this._query += params.join(", ") + ` }) { ${wants.join(", ")} }}`;
-
-    return this;
-  }
-
-  query(
-    queryName: string,
-    wants: string[],
-    data?: Record<string, string | number | null>
-  ) {
-    this._query = `query ${queryName} { ${queryName}`;
-
-    if (data !== undefined && Object.keys(data).length > 0) {
-      // TODO: this is duplicate
-      const params = Object.keys(data).map((key) => {
-        const value =
-          typeof data[key] === "string" ? `"${data[key]}"` : data[key];
-        return `${key}: ${value}`;
-      });
-      this._query += `(data: { ${params.join(", ")} })`;
-    }
-    this._query += ` { ${wants.join(", ")} } }`;
-
-    return this;
-  }
-
-  build() {
-    return this._query;
-  }
-}
 
 describe("Test for movie resolver", () => {
   beforeEach(async () => {
@@ -86,7 +39,7 @@ describe("Test for movie resolver", () => {
     "getAllMovies should return all movies",
     async (movies, limit: number = 10) => {
       // Arrange
-      const queryBuilder = new GraphQLQueryBuilder();
+      const queryBuilder = new QueryGraphQLQueryBuilder("getAllMovies");
       // FIX: should add database in the beforeEach section
       await prisma.movie.createMany({ data: movies });
       const schema = await buildSchema({
@@ -99,7 +52,8 @@ describe("Test for movie resolver", () => {
         getAllMovies: Movie[];
       };
       const query = queryBuilder
-        .query("getAllMovies", ["id", "name", "description"], { limit })
+        .addParameter("limit", limit)
+        .wantsInResponse("id", "name", "description")
         .build();
 
       // Act
@@ -125,21 +79,21 @@ describe("Test for movie resolver", () => {
       resolvers: [MovieResolver],
     });
     const testServer = new ApolloServer<AppContext>({ schema });
-    const queryBuilder = new GraphQLQueryBuilder();
+    const queryBuilder = new MutationGraphQLQueryBuilder("createNewMovie");
 
     type CreateNewMovie = {
       createNewMovie: Movie;
     };
 
     // TODO: also test validation errors
+
     // Act
     const query = queryBuilder
-      .mutation(
-        "createNewMovie",
-        { name: movie.name, description: movie.description },
-        ["name", "description"]
-      )
+      .addParameter("name", movie.name)
+      .addParameter("description", movie.description)
+      .wantsInResponse("name", "description")
       .build();
+
     const response = await testServer.executeOperation<CreateNewMovie>({
       query,
     });
