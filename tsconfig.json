@@ -9,7 +9,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "commonjs",
-    "rootDir": "./src",
     "moduleResolution": "node",
     "baseUrl": "./src",
     "outDir": "./build",
@@ -24,8 +23,6 @@
   },
   "exclude": [
     "node_modules",
-    "build",
-    "tests",
-    "src/**/*.test.ts"
+    "build"
   ]
 }
