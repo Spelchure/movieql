@@ -2,7 +2,10 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
     "target": "es2020",
-    "lib": ["es2020", "esnext.asynciterable"],
+    "lib": [
+      "es2020",
+      "esnext.asynciterable"
+    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "commonjs",
@@ -14,7 +17,15 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["*"]
+      "@/*": [
+        "*"
+      ]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "tests",
+    "src/**/*.test.ts"
+  ]
 }
