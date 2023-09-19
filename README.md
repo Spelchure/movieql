@@ -12,8 +12,6 @@
     <br />
   </p>
 
-![Default workflow](https://github.com/spelchure/moviql/actions/workflows/default.yml/badge.svg)
-
----
+## ![Default workflow](https://github.com/Spelchure/movieql/actions/workflows/default.yml/badge.svg)
 
 </div>
