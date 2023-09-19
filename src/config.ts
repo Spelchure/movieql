@@ -1,7 +1,7 @@
 export class Config {
-  private readonly _kv: Record<string, any>;
+  private readonly _kv: Record<string, string | undefined>;
 
-  constructor(kv: Record<string, any>) {
+  constructor(kv: Record<string, string | undefined>) {
     this._kv = kv;
   }
 

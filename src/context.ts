@@ -1,1 +1,1 @@
-export type AppContext = {};
+export type AppContext = object;
