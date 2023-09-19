@@ -11,4 +11,9 @@
   <p align="center">
     <br />
   </p>
+
+![Default workflow](https://github.com/spelchure/moviql/actions/workflows/default.yml/badge.svg)
+
+---
+
 </div>

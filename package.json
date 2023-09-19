@@ -8,6 +8,7 @@
     "clean": "rimraf build",
     "dev": "nodemon -r tsconfig-paths/register src/main.ts",
     "test": "jest --coverage --testPathIgnorePatterns=tests",
+    "test:ci": "jest --ci --coverage --testPathIgnorePatterns=tests",
     "test:integration": "jest --testPathIgnorePatterns=src",
     "watch:test": "jest --watch",
     "lint": "eslint ./src --ext .ts",
